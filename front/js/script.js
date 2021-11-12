@@ -1,27 +1,22 @@
-
-
+// URL de l'API
 const URL = 'http://localhost:3000/api/products';
 
-
+// Affichage de tous les produits
 fetch(URL)
-    .then (function(res) {
-        if (res.ok) {
-            return res.json();
-        }
-    })
+    .then ( res => res.json())
     .then (function (data) {
         console.log(data);
-        let affichage = '<a href="./product.html?id=${canap._id}">';
         for (let canap of data) {
-            document.getElementById('items').innerHTML =
-            affichage += 
-                `<article>
-                    <img src="${canap.imageUrl}" alt="${canap.altTxt}">
-                    <h3 class="productName">${canap.name}</h3>
-                    <p class="productDescription">${canap.description}</p>
-                </article>`;
+            document.getElementById('items').innerHTML +=
+                `<a href="./product.html?id=${canap._id}">
+                    <article>
+                        <img src="${canap.imageUrl}" alt="${canap.altTxt}">
+                        <h3 class="productName">${canap.name}</h3>
+                        <p class="productDescription">${canap.description}</p>
+                    </article>
+                </a>`;
         }
-        affichage += '</a>';
     })
+    .catch ( error => alert(error))
 
 
