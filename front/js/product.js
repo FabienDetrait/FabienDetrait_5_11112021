@@ -35,49 +35,71 @@ fetch(URL_API + ID)
 //Ajout au panier en cliquant sur le bouton
 document.querySelector('#addToCart').addEventListener('click', function (e) {
     
+    let productId = ID;
+    let productName = document.getElementById('title').innerText;
+    let productImg = document.getElementById('item__img').src;
+    let productPrice = document.getElementById('price').innerText;
+    let productColor = document.getElementById('colors').value;
+    let productQty = document.getElementById('quantity').value;
+
     //Récupération des éléments du produit sélectionné pour le panier
     let productSelected = {
-        productId: ID,
-        productName: document.getElementById('title').innerText,
-        productImg: document.getElementById('item__img').src,
-        productPrice: document.getElementById('price').innerText,
-        productColor: document.getElementById('colors').value,
-        productQty: document.getElementById('quantity').value,
+        productId,
+        productName,
+        productImg,
+        productPrice,
+        productColor,
+        productQty
     };
 
-    function ajoutPanier() {
-        // Variable pour les produits du local Storage
-        let produitLocalStorage = JSON.parse(localStorage.getItem("produit"));
+    // Local Storage
+    let produitLocalStorage = JSON.parse(localStorage.getItem("produit"));
+    
+    // Ajout du produit
+    function ajoutProd () {
+        produitLocalStorage.push(productSelected);
+        localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+    }   
 
-        // si il y a des produits enregistrés dans le localstorage
+    // Les conditions pour ajouter le produit
+    function ajoutPanier () {
+        // Message de confirmation
+        const CONFIRMATION = alert(`Vous venez d'ajouter ${productQty} ${productName} de couleur ${productColor} dans votre panier !`);
+        // si le panier est rempli
         if (produitLocalStorage) {
-            produitLocalStorage.push(productSelected);
-            localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+            // si le panier contient déjà le produit sélectionné avec la même couleur
+            const sameProduct = produitLocalStorage.find((element) => element.productId === productId && element.productColor === productColor);
+            if (sameProduct) { 
+                sameProduct.productQty = parseInt(productSelected.productQty) + parseInt(sameProduct.productQty);
+                localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+                CONFIRMATION;
+                console.table(produitLocalStorage);
+            // si le panier contient des produits différents
+            } else {
+                ajoutProd();
+                CONFIRMATION;
+                console.table(produitLocalStorage);
+            }
+        // Si le panier est vide
+        } else {
+            produitLocalStorage =[];
+            ajoutProd();
+            CONFIRMATION;
+            console.table(produitLocalStorage);
         }
-        // si il n'y a pas de produits enregistrés dans le localstorage
-        else {
-            produitLocalStorage = [];
-            produitLocalStorage.push(productSelected);
-            localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
-        }
-        console.log(produitLocalStorage)
     }
 
     // Message d'alerte si couleur/quantités mal/non renseignées + si ok, rajout au panier
     for (let i in productSelected) {
-        if (productSelected.productColor === '') {
+        if (productColor === '') {
             alert("Merci de sélectionner une couleur");    
             break;
-        } else if (productSelected.productQty == 0 || productSelected.productQty > 100) {
-            alert("Merci de rensigner le nombre d'articles que vous souhaitez (entre 1 et 100)");
+        } else if (productQty == 0 || productQty > 100) {
+            alert("Merci de renseigner le nombre d'articles que vous souhaitez (entre 1 et 100)");
             break;
         } else {
             ajoutPanier();
             break;
         }
-    }
+    }     
 });
-
-
-
-
