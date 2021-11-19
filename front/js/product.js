@@ -14,7 +14,7 @@ fetch(URL_API + ID)
     .then ( function (data) {
         // console.log(data);
         // Récupération de l'image
-        document.querySelector('.item__img').innerHTML = `<img id="item__img" src="${data.imageUrl}" alt="${data.altTxt}"s>`;
+        document.querySelector('.item__img').innerHTML = `<img id="item__img" src="${data.imageUrl}" alt="${data.altTxt}">`;
         // Récupération du nom du produit
         document.getElementById('title').innerHTML = `${data.name}`;
         // Récupération du prix
@@ -38,6 +38,7 @@ document.querySelector('#addToCart').addEventListener('click', function (e) {
     let productId = ID;
     let productName = document.getElementById('title').innerText;
     let productImg = document.getElementById('item__img').src;
+    let productAltImg = document.getElementById('item__img').alt;
     let productPrice = document.getElementById('price').innerText;
     let productColor = document.getElementById('colors').value;
     let productQty = document.getElementById('quantity').value;
@@ -47,6 +48,7 @@ document.querySelector('#addToCart').addEventListener('click', function (e) {
         productId,
         productName,
         productImg,
+        productAltImg,
         productPrice,
         productColor,
         productQty
@@ -103,3 +105,4 @@ document.querySelector('#addToCart').addEventListener('click', function (e) {
         }
     }     
 });
+
