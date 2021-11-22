@@ -75,19 +75,19 @@ document.querySelector('#addToCart').addEventListener('click', function (e) {
                 sameProduct.productQty = parseInt(productSelected.productQty) + parseInt(sameProduct.productQty);
                 localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
                 CONFIRMATION;
-                console.table(produitLocalStorage);
+                // console.table(produitLocalStorage);
             // si le panier contient des produits différents
             } else {
                 ajoutProd();
                 CONFIRMATION;
-                console.table(produitLocalStorage);
+                // console.table(produitLocalStorage);
             }
         // Si le panier est vide
         } else {
             produitLocalStorage =[];
             ajoutProd();
             CONFIRMATION;
-            console.table(produitLocalStorage);
+            // console.table(produitLocalStorage);
         }
     }
 
