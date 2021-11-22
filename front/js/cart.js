@@ -51,9 +51,15 @@ function basketQty() {
       let qtyProductLocalStorage = parseInt(qty.productQty);
       qtyTotal.push(qtyProductLocalStorage);
   }
-  // Additionner les quantités
-  let totalQuantity = qtyTotal.reduce(reducer);
-  document.getElementById('totalQuantity').innerHTML = totalQuantity;
+  // Cas où on supprime tous les produits depuis le panier
+  if (qtyTotal.length === 0) {
+    document.getElementById('cartAndFormContainer').innerHTML = `<h1>Votre panier est vide</h1>`;
+  }
+  else {
+    // Additionner les quantités
+    let totalQuantity = qtyTotal.reduce(reducer);
+    document.getElementById('totalQuantity').innerHTML = totalQuantity;
+  }
 }
 basketQty();
 
@@ -67,47 +73,62 @@ function basketPrice() {
       let priceProductLocalStorage = price.productPrice * price.productQty;
       priceTotal.push(priceProductLocalStorage);
   }
+  // Cas où on supprime tous les produits depuis le panier
+  if (priceTotal.length === 0) {
+  }
+  else {
   // Additionner les prix
   let totalPrice = priceTotal.reduce(reducer);
   document.getElementById('totalPrice').innerHTML = totalPrice;
+  }
 }
 basketPrice();
 
 
 // *************** Changement Quantité ***************
 
-document.querySelector("#cart__items").addEventListener('change', function(changeQty) {
+// Cas où on supprime tous les produits depuis le panier
+if (document.querySelector("#cart__items") === null){
+}
+else {
+  document.querySelector("#cart__items").addEventListener('change', function(changeQty) {
 
-  const id = changeQty.target.closest('.cart__item').dataset.id;
-  const color = changeQty.target.closest('.cart__item').dataset.color;
+    const id = changeQty.target.closest('.cart__item').dataset.id;
+    const color = changeQty.target.closest('.cart__item').dataset.color;
 
-  for (let product of produitLocalStorage) {
-    if (product.productId === id && product.productColor === color) {
-      if (changeQty.target.value == 0) {
-        alert("Si vous ne souhaitez pas l'article, veuillez plutôt le supprimer svp !");
-        changeQty.target.value = product.productQty;
-      } else if (changeQty.target.value > 100) {
-        alert("Désolé, nous n'avons que 100 produits en stock, veuillez donc sélectionner un nombre entre 1 et 100");
-        changeQty.target.value = product.productQty;
-      } else {
-        product.productQty = changeQty.target.value;
-        localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+    for (let product of produitLocalStorage) {
+      if (product.productId === id && product.productColor === color) {
+        if (changeQty.target.value == 0) {
+          alert("Si vous ne souhaitez pas l'article, veuillez plutôt le supprimer svp !");
+          changeQty.target.value = product.productQty;
+        } else if (changeQty.target.value > 100) {
+          alert("Désolé, nous n'avons que 100 produits en stock, veuillez donc sélectionner un nombre entre 1 et 100");
+          changeQty.target.value = product.productQty;
+        } else {
+          product.productQty = changeQty.target.value;
+          localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+        }
       }
     }
-  }
-  
-  basketQty()
-  basketPrice();
-  console.table(produitLocalStorage);
-});
 
+    basketQty()
+    basketPrice();
+    console.table(produitLocalStorage);
+  });
+}
 
+// *************** Suppression d'un produit ***************
 
+const deleteProduct = document.querySelectorAll('.deleteItem');
 
-
-
-
-
+for (let sup = 0; sup < deleteProduct.length; sup++) {
+  deleteProduct[sup].addEventListener('click', function(e) {
+    produitLocalStorage.splice(sup, 1);
+    localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+    alert(`Ce produit a bien été supprimé.`);
+    location.reload();
+  });
+}
 
 
 
