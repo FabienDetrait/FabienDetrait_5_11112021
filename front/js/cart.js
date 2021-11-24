@@ -117,6 +117,7 @@ else {
   });
 }
 
+
 // *************** Suppression d'un produit ***************
 
 const deleteProduct = document.querySelectorAll('.deleteItem');
@@ -131,10 +132,89 @@ for (let sup = 0; sup < deleteProduct.length; sup++) {
 }
 
 
+// *************************************** Formulaire ***********************************************
 
+let form = document.querySelector(".cart__order__form");
 
+// Validation du prénom
+form.firstName.addEventListener('input', function() {
+  validFirstName(this);
+});
 
+const validFirstName = function(inputFirstName) {
+  let firstNameRegExp = new RegExp ("^[a-zA-ZÀ-ÖØ-öø-ÿ'-]{2,}$", "g");
+  let testFirstName = firstNameRegExp.test(inputFirstName.value);
+  if (testFirstName) {
+    document.getElementById('firstNameErrorMsg').innerHTML = '';
+  } else {
+    document.getElementById('firstNameErrorMsg').innerHTML = "Merci de ne saisir que des lettres svp (2 minimum, - et ' autorisés)";
+    return false;
+  } 
+}
 
+// Validation du Nom de famille
+form.lastName.addEventListener('input', function() {
+  validLastName(this);
+});
+
+const validLastName = function(inputLastName) {
+  let lastNameRegExp = new RegExp ("^[a-zA-ZÀ-ÖØ-öø-ÿ'-]{2,}$", "g");
+  let testlastName = lastNameRegExp.test(inputLastName.value);
+  if (testlastName) {
+    document.getElementById('lastNameErrorMsg').innerHTML = '';
+  } else {
+    document.getElementById('lastNameErrorMsg').innerHTML = "Merci de ne saisir que des lettres svp (2 minimum, - et ' autorisés)";
+    return false;
+  } 
+}
+
+// Validation de l'adresse
+form.address.addEventListener('input', function() {
+  validAddress(this);
+});
+
+const validAddress = function(inputAddress) {
+  let addressRegExp = new RegExp ("^[0-9a-zA-ZÀ-ÖØ-öø-ÿ,'\\s-]{2,}$", "g");
+  let testAddress = addressRegExp.test(inputAddress.value);
+  if (testAddress) {
+    document.getElementById('addressErrorMsg').innerHTML = '';
+  } else {
+    document.getElementById('addressErrorMsg').innerHTML = "Merci de saisir une adresse valide";
+    return false;
+  } 
+}
+
+// Validation de la ville
+form.city.addEventListener('input', function() {
+  validCity(this);
+});
+
+const validCity = function(inputCity) {
+  let cityRegExp = new RegExp ("^[a-zA-ZÀ-ÖØ-öø-ÿ,'\\s-]{2,}$", "g");
+  let testCity = cityRegExp.test(inputCity.value);
+  if (testCity) {
+    document.getElementById('cityErrorMsg').innerHTML = '';
+  } else {
+    document.getElementById('cityErrorMsg').innerHTML = "Merci de saisir une ville existante";
+    return false;
+  } 
+}
+
+// Validation de l'email
+form.email.addEventListener('input', function() {
+  validEmail(this);
+});
+
+const validEmail = function(inputEmail) {
+  let emailRegExp = new RegExp ("^[a-zA-Z0-9_.-]+[@]{1}[a-zA-Z0-9_.-]+[.]{1}[a-z]{2,10}$", "g");
+  let testEmail = emailRegExp.test(inputEmail.value);
+  if (testEmail) {
+    document.getElementById('emailErrorMsg').innerHTML = '';
+  } else {
+    document.getElementById('emailErrorMsg').innerHTML = "Merci de saisir une adresse mail valide";
+    return false;
+  } 
+}
 
 
 
