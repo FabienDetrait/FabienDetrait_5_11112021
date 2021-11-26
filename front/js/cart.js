@@ -146,6 +146,7 @@ const validFirstName = function(inputFirstName) {
   let testFirstName = firstNameRegExp.test(inputFirstName.value);
   if (testFirstName) {
     document.getElementById('firstNameErrorMsg').innerHTML = '';
+    return true;
   } else {
     document.getElementById('firstNameErrorMsg').innerHTML = "Merci de ne saisir que des lettres svp (2 minimum, - et ' autorisés)";
     return false;
@@ -162,6 +163,7 @@ const validLastName = function(inputLastName) {
   let testlastName = lastNameRegExp.test(inputLastName.value);
   if (testlastName) {
     document.getElementById('lastNameErrorMsg').innerHTML = '';
+    return true;
   } else {
     document.getElementById('lastNameErrorMsg').innerHTML = "Merci de ne saisir que des lettres svp (2 minimum, - et ' autorisés)";
     return false;
@@ -178,13 +180,13 @@ const validAddress = function(inputAddress) {
   let testAddress = addressRegExp.test(inputAddress.value);
   if (testAddress) {
     document.getElementById('addressErrorMsg').innerHTML = '';
+    return true;
   } else {
     document.getElementById('addressErrorMsg').innerHTML = "Merci de saisir une adresse valide";
     return false;
   } 
 }
 
-// Validation de la ville
 form.city.addEventListener('input', function() {
   validCity(this);
 });
@@ -194,6 +196,7 @@ const validCity = function(inputCity) {
   let testCity = cityRegExp.test(inputCity.value);
   if (testCity) {
     document.getElementById('cityErrorMsg').innerHTML = '';
+    return true;
   } else {
     document.getElementById('cityErrorMsg').innerHTML = "Merci de saisir une ville existante";
     return false;
@@ -206,10 +209,11 @@ form.email.addEventListener('input', function() {
 });
 
 const validEmail = function(inputEmail) {
-  let emailRegExp = new RegExp ("^[a-zA-Z0-9_.-]+[@]{1}[a-zA-Z0-9_.-]+[.]{1}[a-z]{2,10}$", "g");
+  let emailRegExp = new RegExp ("^[a-zA-Z0-9_.-]+[@]{1}[a-zA-Z0-9_-]+[.]{1}[a-z]{2,10}$", "g");
   let testEmail = emailRegExp.test(inputEmail.value);
   if (testEmail) {
     document.getElementById('emailErrorMsg').innerHTML = '';
+    return true;
   } else {
     document.getElementById('emailErrorMsg').innerHTML = "Merci de saisir une adresse mail valide";
     return false;
@@ -217,5 +221,58 @@ const validEmail = function(inputEmail) {
 }
 
 
+// *************************************** Validation Commande ***********************************************
 
+const confirmationOrder = document.getElementById('order');
+
+confirmationOrder.addEventListener('click', function(e) {
+  e.preventDefault();
+
+  if (validFirstName(form.firstName) && validLastName(form.lastName) && validAddress(form.address) && validCity(form.city) && validEmail(form.email)) { 
+
+    // Récupération des valeurs saisies dans le formulaire stockées dans un objet
+    const contact = {
+      firstName: form.firstName.value,
+      lastName: form.lastName.value,
+      address: form.address.value,
+      city: form.city.value,
+      email: form.email.value
+    }
+    console.log(contact)
+
+    // Récupération de l'id des produits stocké dans un tableau
+    const products = [];
+    for (let id of produitLocalStorage) {
+      let idProducts = id.productId;
+      products.push(idProducts);
+    }
+    console.log(products)
+
+    // envoi dans le local Storage
+    let finalOrder = {
+      contact,
+      products
+    }
+    console.log(finalOrder)
+    localStorage.setItem("order", JSON.stringify(finalOrder));
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      body: JSON.stringify(finalOrder),
+      headers: {
+        "Content-type": "application/JSON",
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      const orderId = data.orderId;
+      console.log(orderId);
+      window.location = `confirmation.html?id=${orderId}`;
+      localStorage.clear();
+    });   
+  } else {
+    alert('Veuillez remplir les champs correctement svp !');
+  }
+});
 
