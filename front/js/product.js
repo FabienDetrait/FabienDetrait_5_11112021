@@ -9,25 +9,28 @@ const URL_ID = new URLSearchParams(QUERYSTRING_URL_ID);
 const ID = URL_ID.get('id');
 
 // Récupération de nos éléments en fonction de l'ID
-fetch(URL_API + ID)
-    .then ( res => res.json())
-    .then ( function (data) {
-        // console.log(data);
-        // Récupération de l'image
-        document.querySelector('.item__img').innerHTML = `<img id="item__img" src="${data.imageUrl}" alt="${data.altTxt}">`;
-        // Récupération du nom du produit
-        document.getElementById('title').innerHTML = `${data.name}`;
-        // Récupération du prix
-        document.getElementById('price').innerHTML = `${data.price}`;
-        // Récupération de la description
-        document.getElementById('description').innerHTML = `${data.description}`;
-        // Choix de la couleur
-        let color = data.colors;
-        for (let i in color) {
-            document.getElementById('colors').innerHTML += `<option value="${color[i]}">${color[i]}</option>`
-        };
-    })
-    .catch ( error => alert(error))
+function displayProduct() {
+    fetch(URL_API + ID)
+        .then ( res => res.json())
+        .then ( function (data) {
+            console.log(data);
+            // Récupération de l'image
+            document.querySelector('.item__img').innerHTML = `<img id="item__img" src="${data.imageUrl}" alt="${data.altTxt}">`;
+            // Récupération du nom du produit
+            document.getElementById('title').innerHTML = `${data.name}`;
+            // Récupération du prix
+            document.getElementById('price').innerHTML = `${data.price}`;
+            // Récupération de la description
+            document.getElementById('description').innerHTML = `${data.description}`;
+            // Choix de la couleur
+            let color = data.colors;
+            for (let i in color) {
+                document.getElementById('colors').innerHTML += `<option value="${color[i]}">${color[i]}</option>`
+            };
+        })
+        .catch ( error => alert(error))
+};
+displayProduct();
 
 
 // ******************************************* PANIER **********************************************************
@@ -58,13 +61,13 @@ document.querySelector('#addToCart').addEventListener('click', function (e) {
     let produitLocalStorage = JSON.parse(localStorage.getItem("produit"));
     
     // Ajout du produit
-    function ajoutProd () {
+    function ajoutProd() {
         produitLocalStorage.push(productSelected);
         localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
     }   
 
     // Les conditions pour ajouter le produit
-    function ajoutPanier () {
+    function ajoutPanier() {
         // Message de confirmation
         const CONFIRMATION = alert(`Vous venez d'ajouter ${productQty} ${productName} de couleur ${productColor} dans votre panier !`);
         // si le panier est rempli
@@ -75,19 +78,19 @@ document.querySelector('#addToCart').addEventListener('click', function (e) {
                 sameProduct.productQty = parseInt(productSelected.productQty) + parseInt(sameProduct.productQty);
                 localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
                 CONFIRMATION;
-                // console.table(produitLocalStorage);
+                console.table(produitLocalStorage);
             // si le panier contient des produits différents
             } else {
                 ajoutProd();
                 CONFIRMATION;
-                // console.table(produitLocalStorage);
+                console.table(produitLocalStorage);
             }
         // Si le panier est vide
         } else {
             produitLocalStorage =[];
             ajoutProd();
             CONFIRMATION;
-            // console.table(produitLocalStorage);
+            console.table(produitLocalStorage);
         }
     }
 

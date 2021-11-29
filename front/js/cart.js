@@ -9,37 +9,40 @@ const reducer = (accumulator, currentValue) => accumulator + currentValue;
 // *************************************** Affichage du panier ***********************************************
 
 // *************** Affichage des produits ajoutés ***************
- 
-// Si panier vide
-if (produitLocalStorage === null) {
-    document.getElementById('cartAndFormContainer').innerHTML = `<h1>Votre panier est vide</h1>`;
-// Sinon
-} else {
-    for (let article of produitLocalStorage) {
-      document.getElementById('cart__items').innerHTML += 
-      `<article class="cart__item" data-id="${article.productId}" data-color="${article.productColor}">
-        <div class="cart__item__img">
-          <img src="${article.productImg}" alt="${article.productAltImg}">
-        </div>
-        <div class="cart__item__content">
-          <div class="cart__item__content__description">
-            <h2>Nom du produit : ${article.productName}</h2>
-            <p>Couleur : ${article.productColor}</p>
-            <p>Prix : ${article.productPrice} €</p>
+
+function displayBasket() {
+  // Si panier vide
+  if (produitLocalStorage === null) {
+      document.getElementById('cartAndFormContainer').innerHTML = `<h1>Votre panier est vide</h1>`;
+  // Sinon
+  } else {
+      for (let article of produitLocalStorage) {
+        document.getElementById('cart__items').innerHTML += 
+        `<article class="cart__item" data-id="${article.productId}" data-color="${article.productColor}">
+          <div class="cart__item__img">
+            <img src="${article.productImg}" alt="${article.productAltImg}">
           </div>
-          <div class="cart__item__content__settings">
-            <div class="cart__item__content__settings__quantity">
-              <p>Qté : </p>
-              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${article.productQty}">
+          <div class="cart__item__content">
+            <div class="cart__item__content__description">
+              <h2>Nom du produit : ${article.productName}</h2>
+              <p>Couleur : ${article.productColor}</p>
+              <p>Prix : ${article.productPrice} €</p>
             </div>
-            <div class="cart__item__content__settings__delete">
-              <p class="deleteItem">Supprimer</p>
+            <div class="cart__item__content__settings">
+              <div class="cart__item__content__settings__quantity">
+                <p>Qté : </p>
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${article.productQty}">
+              </div>
+              <div class="cart__item__content__settings__delete">
+                <p class="deleteItem">Supprimer</p>
+              </div>
             </div>
           </div>
-        </div>
-      </article>`;
-    }
-}
+        </article>`;
+      }
+  }
+};
+displayBasket();
  
 
 // *************** Quantité Totale de produits ***************
@@ -87,49 +90,54 @@ basketPrice();
 
 // *************** Changement Quantité ***************
 
-// Cas où on supprime tous les produits depuis le panier
-if (document.querySelector("#cart__items") === null){
-}
-else {
-  document.querySelector("#cart__items").addEventListener('change', function(changeQty) {
+function modifyQuantity() {
+  // Cas où on supprime tous les produits depuis le panier
+  if (document.querySelector("#cart__items") === null){
+  }
+  else {
+    document.querySelector("#cart__items").addEventListener('change', function(changeQty) {
 
-    const id = changeQty.target.closest('.cart__item').dataset.id;
-    const color = changeQty.target.closest('.cart__item').dataset.color;
+      const id = changeQty.target.closest('.cart__item').dataset.id;
+      const color = changeQty.target.closest('.cart__item').dataset.color;
 
-    for (let product of produitLocalStorage) {
-      if (product.productId === id && product.productColor === color) {
-        if (changeQty.target.value == 0) {
-          alert("Si vous ne souhaitez pas l'article, veuillez plutôt le supprimer svp !");
-          changeQty.target.value = product.productQty;
-        } else if (changeQty.target.value > 100) {
-          alert("Désolé, nous n'avons que 100 produits en stock, veuillez donc sélectionner un nombre entre 1 et 100");
-          changeQty.target.value = product.productQty;
-        } else {
-          product.productQty = changeQty.target.value;
-          localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+      for (let product of produitLocalStorage) {
+        if (product.productId === id && product.productColor === color) {
+          if (changeQty.target.value == 0) {
+            alert("Si vous ne souhaitez pas l'article, veuillez plutôt le supprimer svp !");
+            changeQty.target.value = product.productQty;
+          } else if (changeQty.target.value > 100) {
+            alert("Désolé, nous n'avons que 100 produits en stock, veuillez donc sélectionner un nombre entre 1 et 100");
+            changeQty.target.value = product.productQty;
+          } else {
+            product.productQty = changeQty.target.value;
+            localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+          }
         }
       }
-    }
-
-    basketQty()
-    basketPrice();
-    console.table(produitLocalStorage);
-  });
-}
+      basketQty();
+      basketPrice();
+      console.table(produitLocalStorage);
+    });
+  }
+};
+modifyQuantity();
 
 
 // *************** Suppression d'un produit ***************
 
-const deleteProduct = document.querySelectorAll('.deleteItem');
+function deleteItem() {
+  const deleteProduct = document.querySelectorAll('.deleteItem');
 
-for (let sup = 0; sup < deleteProduct.length; sup++) {
-  deleteProduct[sup].addEventListener('click', function(e) {
-    produitLocalStorage.splice(sup, 1);
-    localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
-    alert(`Ce produit a bien été supprimé.`);
-    location.reload();
-  });
-}
+  for (let sup = 0; sup < deleteProduct.length; sup++) {
+    deleteProduct[sup].addEventListener('click', function(e) {
+      produitLocalStorage.splice(sup, 1);
+      localStorage.setItem("produit", JSON.stringify(produitLocalStorage));
+      alert(`Ce produit a bien été supprimé.`);
+      location.reload();
+    });
+  }
+};
+deleteItem();
 
 
 // *************************************** Formulaire ***********************************************
@@ -229,7 +237,6 @@ confirmationOrder.addEventListener('click', function(e) {
   e.preventDefault();
 
   if (validFirstName(form.firstName) && validLastName(form.lastName) && validAddress(form.address) && validCity(form.city) && validEmail(form.email)) { 
-
     // Récupération des valeurs saisies dans le formulaire stockées dans un objet
     const contact = {
       firstName: form.firstName.value,
